@@ -22,24 +22,26 @@ if (isset($_POST['logout'])) {
     header('Location: login.php');
     die();
 }
-if (isset($_POST['newgame'])){}
-if (isset($_POST['join'])){
+if (isset($_POST['newgame'])) {
+}
+if (isset($_POST['join'])) {
     $games = $db->prepare('SELECT * FROM game WHERE id=:id');
     $games->bindValue(':id', $_POST['join'], PDO::PARAM_INT);
     $games->execute();
     $game = $games->fetch();
-    if (is_null($game['player_1'])){
+    if (is_null($game['player_1'])) {
         $query = $db->prepare("UPDATE game SET player_1=:id WHERE id=:game_id");
         $query->bindValue(':id', $user['id']);
         $query->bindValue(':game_id', $game['id']);
         $query->execute();
-    } else{
-        $query = $db->prepare("UPDATE game SET player_2=:id WHERE id=:game_id");
+    } elseif(is_null($game['player_2'])) {
+        $query = $db->prepare("UPDATE game SET player_2=:id, state='active' WHERE id=:game_id");
         $query->bindValue(':id', $user['id']);
         $query->bindValue(':game_id', $game['id']);
         $query->execute();
     }
     header('Location:waiting.php');
+    $_SESSION['game_id'] = $game['id'];
     die();
 }
 ?>
@@ -111,19 +113,19 @@ if (isset($_POST['join'])){
             foreach ($games as $game) {
                 echo "<tr>";
                 echo "<td>" . htmlentities($game['id']) . "</td>";
-                if (is_null($game['player_1'])){
+                if (is_null($game['player_1'])) {
                     echo "<td>Vacio</td>";
                 } else {
                     echo "<td>" . htmlentities($game['player_1']) . "</td>";
                 }
-                if (is_null($game['player_2'])){
+                if (is_null($game['player_2'])) {
                     echo "<td>Vacio</td>";
                 } else {
                     echo "<td>" . htmlentities($game['player_2']) . "</td>";
                 }
 
-                if ($game['state']=='inactive'){
-                    echo "<td>" . htmlentities($game['state']) . "<button name='join' value=".$game['id'].">Join</button></td>";
+                if ($game['state'] == 'inactive') {
+                    echo "<td>" . htmlentities($game['state']) . "<button name='join' value=" . $game['id'] . ">Join</button></td>";
                 } else {
                     echo "<td>" . htmlentities($game['state']) . "</td>";
                 }
