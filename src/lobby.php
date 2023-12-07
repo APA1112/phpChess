@@ -74,6 +74,7 @@ if (isset($_POST['join'])) {
     <table>
         <thead>
         <tr>
+            <th>Game ID</th>
             <th>Player 1</th>
             <th>Player 2</th>
             <th>State</th>
@@ -81,20 +82,21 @@ if (isset($_POST['join'])) {
         </thead>
         <tbody>
         <?php
-        $games = $db->prepare("SELECT game.* FROM game JOIN player ON game.player_1 = player.id OR game.player_2 = player.id WHERE player.id=:username AND game.state <> 'finished'");
+        $games = $db->prepare("SELECT game.* FROM game JOIN player ON game.player_1 = player.id OR game.player_2 = player.id WHERE player.id=:username AND game.state = 'active'");
         $games->bindValue(':username', $user['id']);
         $games->setFetchMode(PDO::FETCH_ASSOC);
         $games->execute();
         if ($games->rowCount() > 0) {
             foreach ($games as $game) {
                 echo "<tr>";
+                echo "<td>" . htmlentities($game['id']) . "</td>";
                 echo "<td>" . $game['player_1'] . "</td>";
                 echo "<td>" . $game['player_2'] . "</td>";
                 echo "<td>" . htmlentities($game['state']) . "</td>";
                 echo "</tr>";
             }
         } else {
-            echo "No perteneces a ninguna partida";
+            echo "No tienes partidas activas";
         }
 
         ?>
