@@ -1,0 +1,19 @@
+{
+  "name": "vendor_name/phpchess",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "alejandro",
+      "email": "email@example.com"
+    }
+  ],
+  "require": {
+  },
+  "autoload": {
+    "psr-4": {
+      "": "src/"
+    }
+  }
+}
