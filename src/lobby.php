@@ -23,6 +23,11 @@ if (isset($_POST['logout'])) {
     die();
 }
 if (isset($_POST['newgame'])) {
+    $query = $db->prepare('INSERT INTO game (player_1) VALUE (:id)');
+    $query->bindValue(':id', $user['id']);
+    $query->execute();
+    header('Refresh:5; Location:waiting.php');
+    die();
 }
 if (isset($_POST['join'])) {
     $games = $db->prepare('SELECT * FROM game WHERE id=:id');
@@ -34,13 +39,14 @@ if (isset($_POST['join'])) {
         $query->bindValue(':id', $user['id']);
         $query->bindValue(':game_id', $game['id']);
         $query->execute();
+        header('Refresh:5; Location:waiting.php');
     } elseif(is_null($game['player_2'])) {
         $query = $db->prepare("UPDATE game SET player_2=:id, state='active' WHERE id=:game_id");
         $query->bindValue(':id', $user['id']);
         $query->bindValue(':game_id', $game['id']);
         $query->execute();
+        header('Location:chess.php');
     }
-    header('Location:waiting.php');
     $_SESSION['game_id'] = $game['id'];
     die();
 }
