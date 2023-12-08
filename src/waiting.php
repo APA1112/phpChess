@@ -1,7 +1,7 @@
 <?php
 session_start();
-var_dump($_SESSION);
-if (isset($_POST['back'])){
+$player1 = $_SESSION['username'];
+if (isset($_POST['back'])) {
     header('Location:lobby.php');
     die();
 }
@@ -16,6 +16,9 @@ if (isset($_POST['back'])){
     <title>Waiting player</title>
 </head>
 <body>
+<h2>Esperando oponente...</h2>
+<h3>Jugadores conectados:</h3>
+<b><?php echo $player1 ?></b>
 <form method="post">
     <button name="back">Back to lobby</button>
 </form>
