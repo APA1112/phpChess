@@ -39,7 +39,7 @@ if (isset($_POST['join'])) {
         $query->bindValue(':id', $user['id']);
         $query->bindValue(':game_id', $game['id']);
         $query->execute();
-        header('Refresh:5; Location:waiting.php');
+        header('Location:waiting.php');
     } elseif(is_null($game['player_2'])) {
         $query = $db->prepare("UPDATE game SET player_2=:id, state='active' WHERE id=:game_id");
         $query->bindValue(':id', $user['id']);
@@ -48,6 +48,10 @@ if (isset($_POST['join'])) {
         header('Location:chess.php');
     }
     $_SESSION['game_id'] = $game['id'];
+    die();
+}
+if (isset($_POST['play'])){
+    header('Location:waiting.php');
     die();
 }
 ?>
@@ -92,7 +96,7 @@ if (isset($_POST['join'])) {
                 echo "<td>" . htmlentities($game['id']) . "</td>";
                 echo "<td>" . $game['player_1'] . "</td>";
                 echo "<td>" . $game['player_2'] . "</td>";
-                echo "<td>" . htmlentities($game['state']) . "</td>";
+                echo "<td>" . htmlentities($game['state']) . "<button name='play'>Play</button></td>";
                 echo "</tr>";
             }
         } else {
@@ -114,7 +118,7 @@ if (isset($_POST['join'])) {
         </thead>
         <tbody>
         <?php
-        $games = $db->prepare("SELECT * FROM game WHERE state <> 'finished'");
+        $games = $db->prepare("SELECT * FROM game WHERE state NOT IN ('finished', 'active')");
         $games->setFetchMode(PDO::FETCH_ASSOC);
         $games->execute();
         if ($games->rowCount() > 0) {
